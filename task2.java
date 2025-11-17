@@ -20,24 +20,40 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 public class task2 {
-    public static void FCFS(){
-
+    // First-Come, First-Served algorithm implementation
+    public static void FCFS(ArrayList<Integer> requests, int head) {
+        int totalHeadMovement = 0;
+        int directionChanges = 0;
+        int prevDirection = 0;
+        for (int request : requests) {
+            // Process each request in the order they arrive
+            // System.out.println("Servicing request at cylinder: " + request);
+            if (Integer.compare(request, head) != prevDirection && prevDirection != 0) {
+                directionChanges++;
+            }
+            prevDirection = Integer.compare(request, head);
+            totalHeadMovement += Math.abs(request - head);
+            head = request;
+        }
+        
+        // Output results
+        System.out.println("FCFS - Total Head Movement: " + totalHeadMovement + ", Direction Changes: " + directionChanges);
     }
 
     public static void main(String[] args){
         int numberRequests = 1000;
 
         // ---- Part 1 ----
-        // Generate random 1000 cylinder requests and run each algorithm
-        int randomRequests1[] = new int[numberRequests];
+        // Generate random 1000 cylinder requests between 0 and 4999
+        ArrayList<Integer> randomRequests1 = new ArrayList<>(numberRequests);
         Random random = new Random();
 
         for (int i = 0; i < numberRequests; i++) {
-            randomRequests1[i] = random.nextInt(numberRequests);
+            randomRequests1.add(random.nextInt(numberRequests));
         }
 
         // ---- Part 2 ----
-        // Read cylinder requests from input.txt and run each algorithm
+        // Read cylinder requests from input.txt
         ArrayList<Integer> randomRequests2 = new ArrayList<>();
         String fileName = "input.txt";
 
@@ -45,9 +61,25 @@ public class task2 {
             while (scanner.hasNextInt()) {
                 randomRequests2.add(scanner.nextInt());
             }
+            scanner.close();
         } catch (FileNotFoundException e) {
             System.err.println("File not found: " + e.getMessage());
         }
+        
+
+        // ---- Run algorithms on both sets of requests ----
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter initial head position (0-4999): ");
+        int initialHeadPosition = scanner.nextInt();
+        scanner.close();
+
+        // Run algorithms with part 1 requests
+        // System.out.println("Results for random requests:");
+        // FCFS(randomRequests1, initialHeadPosition);
+
+        // Run algorithms with part 2 requests
+        System.out.println("Results for requests from input.txt:");
+        FCFS(randomRequests2, initialHeadPosition);
 
     }
 }
