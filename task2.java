@@ -37,7 +37,7 @@ public class task2 {
         }
         
         // Output results
-        System.out.println("FCFS - Total Head Movement: " + totalHeadMovement + ", Direction Changes: " + directionChanges);
+        System.out.printf("FCFS - Total Head Movement: %d, Direction Changes: %d\n\n", totalHeadMovement, directionChanges);
     }
 
     // Shortest Seek Time First algorithm implementation
@@ -102,7 +102,7 @@ public class task2 {
         }
 
         // Output results
-        System.out.println("SSTF - Total Head Movement: " + totalHeadMovement + ", Direction Changes: " + directionChanges);
+        System.out.printf("SSTF - Total Head Movement: %d, Direction Changes: %d\n\n", totalHeadMovement, directionChanges);;
 
     }
 
@@ -112,8 +112,9 @@ public class task2 {
         int directionChanges = 0;
         
         // Sort requests in ascending order
-        Collections.sort(requests);
         requests.add(4999);
+        Collections.sort(requests);
+        
         // Find initial position of head in sorted list
         int pos = Collections.binarySearch(requests, head);
         if (pos < 0) pos = -pos - 1;
@@ -135,7 +136,42 @@ public class task2 {
         }
 
         // Output results
-        System.out.println("SCAN - Total Head Movement: " + totalHeadMovement + ", Direction Changes: " + directionChanges);
+        System.out.printf("SCAN - Total Head Movement: %d, Direction Changes: %d\n\n", totalHeadMovement, directionChanges);
+    }
+
+    // Scan algorithm implementation
+    public static void CSCAN(ArrayList<Integer> requests, int head) {
+        int totalHeadMovement = 0;
+        int directionChanges = 0;
+        
+        // Sort requests in ascending order
+        requests.add(0);
+        requests.add(4999);
+        Collections.sort(requests);
+        
+        // Find initial position of head in sorted list
+        int pos = Collections.binarySearch(requests, head);
+        if (pos < 0) pos = -pos - 1;
+
+        // Go towards end of list
+        for (int i = pos; i < requests.size(); i++) {
+            // Process each request in the order they arrive
+            System.out.println("Servicing request at cylinder: " + requests.get(i));
+            totalHeadMovement += Math.abs(requests.get(i) - head);
+            head = requests.get(i);
+        }
+        directionChanges++;
+
+        // Go towards start of list
+        for (int i = 0; i < pos; i++) {
+            System.out.println("Servicing request at cylinder: " + requests.get(i));
+            totalHeadMovement += Math.abs(requests.get(i) - head);
+            head = requests.get(i);
+        }
+        directionChanges++;
+
+        // Output results
+        System.out.printf("CSCAN - Total Head Movement: %d, Direction Changes: %d\n\n", totalHeadMovement, directionChanges);
     }
 
     public static void main(String[] args){
@@ -172,15 +208,18 @@ public class task2 {
         scanner.close();
 
         // Run algorithms with part 1 requests
-        // System.out.println("Results for random requests:");
-        // FCFS(randomRequests1, initialHeadPosition);
-        // SSTF(randomRequests1, initialHeadPosition);
+        System.out.println("Results for random requests:");
+        FCFS(randomRequests1, initialHeadPosition);
+        SSTF(randomRequests1, initialHeadPosition);
+        SCAN(randomRequests1, initialHeadPosition);
+        CSCAN(randomRequests1, initialHeadPosition);
 
         // Run algorithms with part 2 requests
         System.out.println("Results for requests from input.txt:");
-        // FCFS(randomRequests2, initialHeadPosition);
-        // SSTF(randomRequests2, initialHeadPosition);
+        FCFS(randomRequests2, initialHeadPosition);
+        SSTF(randomRequests2, initialHeadPosition);
         SCAN(randomRequests2, initialHeadPosition);
+        CSCAN(randomRequests2, initialHeadPosition);
 
     }
 }
