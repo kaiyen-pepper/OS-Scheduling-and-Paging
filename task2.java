@@ -14,13 +14,10 @@
 
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Set;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 
 public class task2 {
     // First-Come, First-Serve algorithm implementation
@@ -45,74 +42,73 @@ public class task2 {
 
     // Shortest Seek Time First algorithm implementation
     public static void SSTF(ArrayList<Integer> requests, int head) {
-        // Sort requests via QuickSort
-        requests.add(2150); // Temporary addition to avoid index issues
+        // Sort requests in ascending order
         Collections.sort(requests);
 
-        // Use two pointers to track closest requests
-        int left = (requests.indexOf(head) > 0) ? requests.indexOf(head) - 1 : 0;
-        int right = (requests.indexOf(head) < requests.size() - 1) ? requests.indexOf(head) + 1 : 4999;
         int totalHeadMovement = 0;
         int directionChanges = 0;
-        int prevDirection = 0;
-        Set<Integer> visited = new HashSet<Integer>();
+        boolean[] visited = new boolean[requests.size()];
+        String prevDirection = null;
 
-        // Infinite loop stuck on one end
-        while (visited.size() < requests.size() - 1) {
-            // Find the closest request based on left and right pointers
-            int left_diff = Math.abs(head - requests.get(left));
-            int right_diff = Math.abs(head - requests.get(right));
+        // Find initial position of head in sorted list
+        int pos = Collections.binarySearch(requests, head);
+        if (pos < 0) pos = -pos - 1;
 
-            // Choose next request if not visited already
-            int nextHead = -1;
-            if (!visited.contains(left) && !visited.contains(right)) {
-                nextHead = (left_diff <= right_diff) ? left : right;
+        int left = pos - 1;
+        int right = pos;
+
+        while (true) {
+            int leftDiff = Integer.MAX_VALUE;
+            int rightDiff = Integer.MAX_VALUE;
+
+            if (left >= 0 && !visited[left])
+                leftDiff = Math.abs(head - requests.get(left));
+
+            if (right < requests.size() && !visited[right])
+                rightDiff = Math.abs(head - requests.get(right));
+
+            // Visited all requests 
+            if (leftDiff == Integer.MAX_VALUE && rightDiff == Integer.MAX_VALUE)
+                break;
+
+
+            // Pick closest out of left and right indices
+            int next;
+            int nextIndex;
+            String nextDirection;
+
+            if (leftDiff <= rightDiff) {
+                next = requests.get(left);
+                nextIndex = left;
+                nextDirection = "left";
+                left--;
             } else {
-                nextHead = visited.contains(left) ? right : left;
+                next = requests.get(right);
+                nextIndex = right;
+                nextDirection = "right";
+                right++;
             }
 
-            // Process request and update HashSet
-            System.out.println("Servicing request at cylinder: " + requests.get(nextHead));
-            totalHeadMovement += Math.abs(requests.get(nextHead) - head);
-            if (Integer.compare(requests.get(nextHead), head) != prevDirection && prevDirection != 0) {
+            if (prevDirection != null && !prevDirection.equals(nextDirection)) {
                 directionChanges++;
             }
-            prevDirection = Integer.compare(nextHead, head);
-            visited.add(nextHead);
 
-            // Update head position
-            head = requests.get(nextHead);
+            prevDirection = nextDirection;
+            visited[nextIndex] = true;
 
-            // Update left and right pointers
-            left = (nextHead == left && left > 0) ? left - 1 : left;
-            right = (nextHead == right && right < requests.size() - 1) ? right + 1 : right;
+            System.out.println("Servicing request at cylinder: " + next);
+            totalHeadMovement += Math.abs(head - next);
+            head = next;
         }
-
-        // for (int i = 0; i < requests.size(); i++) {
-        //     int nextRequest;
-        //     if (Math.abs(head - requests.get(left)) <= Math.abs(head - requests.get(right)) && requests.get(left) != 0) {
-        //         nextRequest = requests.get(left);
-        //         left = (requests.indexOf(requests.get(left)) > 0) ? requests.get(left - 1) : 0;
-        //     } else if (right != 4999) {
-        //         nextRequest = requests.get(right);
-        //         right = (requests.indexOf(requests.get(right)) < requests.size() - 1) ? requests.get(right + 1) : 4999;
-        //     } else {
-        //         break; // No more requests to process
-        //     }
-
-        //     // Process the next request
-        //     System.out.println("Servicing request at cylinder: " + requests.get(nextRequest));
-        //     if (Integer.compare(requests.get(nextRequest), head) != prevDirection && prevDirection != 0) {
-        //         directionChanges++;
-        //     }
-        //     prevDirection = Integer.compare(requests.get(nextRequest), head);
-        //     totalHeadMovement += Math.abs(requests.get(nextRequest) - head);
-        //     head = requests.get(nextRequest);
-        // }
 
         // Output results
         System.out.println("SSTF - Total Head Movement: " + totalHeadMovement + ", Direction Changes: " + directionChanges);
 
+    }
+
+    // Shortest Seek Time First algorithm implementation
+    public static void SCAN(ArrayList<Integer> requests, int head) {
+        
     }
 
     public static void main(String[] args){
@@ -156,7 +152,8 @@ public class task2 {
         // Run algorithms with part 2 requests
         System.out.println("Results for requests from input.txt:");
         // FCFS(randomRequests2, initialHeadPosition);
-        SSTF(randomRequests2, initialHeadPosition);
+        // SSTF(randomRequests2, initialHeadPosition);
+        SCAN(randomRequests2, initialHeadPosition);
 
     }
 }
