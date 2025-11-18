@@ -106,9 +106,36 @@ public class task2 {
 
     }
 
-    // Shortest Seek Time First algorithm implementation
+    // Scan algorithm implementation
     public static void SCAN(ArrayList<Integer> requests, int head) {
+        int totalHeadMovement = 0;
+        int directionChanges = 0;
         
+        // Sort requests in ascending order
+        Collections.sort(requests);
+        requests.add(4999);
+        // Find initial position of head in sorted list
+        int pos = Collections.binarySearch(requests, head);
+        if (pos < 0) pos = -pos - 1;
+
+        // Go towards end of list
+        for (int i = pos; i < requests.size(); i++) {
+            // Process each request in the order they arrive
+            System.out.println("Servicing request at cylinder: " + requests.get(i));
+            totalHeadMovement += Math.abs(requests.get(i) - head);
+            head = requests.get(i);
+        }
+        directionChanges++;
+
+        // Go towards start of list
+        for (int i = pos - 1; i >= 0; i--) {
+            System.out.println("Servicing request at cylinder: " + requests.get(i));
+            totalHeadMovement += Math.abs(requests.get(i) - head);
+            head = requests.get(i);
+        }
+
+        // Output results
+        System.out.println("SCAN - Total Head Movement: " + totalHeadMovement + ", Direction Changes: " + directionChanges);
     }
 
     public static void main(String[] args){
