@@ -15,16 +15,16 @@ import java.util.Scanner;
 
 public class task3 {
 
-    public static int calculatePlateNumber(int blockNum, int numCylinder, int numTracks, int numSectors){
-        return -1;
+    public static int calculateCylinders(int blockNum, int numCylinder, int numTracks, int numSectors){
+        return blockNum / (numTracks * numSectors);
     }
 
-    public static int calculateSectorNumber(int blockNum, int numCylinder, int numTracks, int numSectors){
-        return -1;
+    public static int calculateTracks(int blockNum, int numCylinder, int numTracks, int numSectors){
+        return blockNum % (numTracks * numSectors) / numSectors;
     }
 
-    public static int calculateCylinderIndex(int blockNum, int numCylinder, int numTracks, int numSectors){
-        return -1;
+    public static int calculateSectors(int blockNum, int numCylinder, int numTracks, int numSectors){
+        return blockNum % (numTracks * numSectors) % numSectors;
     }
 
     public static void main(String[] args) {
@@ -46,11 +46,11 @@ public class task3 {
         scanner.close();
 
         // Do calculations
-        int plateNum = calculatePlateNumber(blockNum, numCylinder, numTracks, numSectors);
-        int sectorNum = calculateSectorNumber(blockNum, numCylinder, numTracks, numSectors);
-        int cylinderIndex = calculateCylinderIndex(blockNum, numCylinder, numTracks, numSectors);
+        int cylinderIndex = calculateCylinders(blockNum, numCylinder, numTracks, numSectors);
+        int trackNum = calculateTracks(blockNum, numCylinder, numTracks, numSectors);
+        int sectorNum = calculateSectors(blockNum, numCylinder, numTracks, numSectors);
 
         // Print results
-        System.out.printf("The logical block number %d is located at < %d , %d , %d >\n", blockNum, cylinderIndex, plateNum, sectorNum);
+        System.out.printf("The logical block number %d is located at < %d , %d , %d >\n", blockNum, cylinderIndex, trackNum, sectorNum);
     }
 }
