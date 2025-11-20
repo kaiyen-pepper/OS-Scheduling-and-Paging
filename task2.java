@@ -248,10 +248,10 @@ public class task2 {
 
         // Run algorithms with part 1 requests
         System.out.println("Results for random requests:");
-        // FCFS(randomRequests1, initialHeadPosition, previousHeadPosition);
-        // SSTF(randomRequests1, initialHeadPosition, previousHeadPosition);
-        // SCAN(randomRequests1, initialHeadPosition, previousHeadPosition);
-        // CSCAN(randomRequests1, initialHeadPosition, previousHeadPosition);
+        FCFS(randomRequests1, initialHeadPosition, previousHeadPosition);
+        SSTF(randomRequests1, initialHeadPosition, previousHeadPosition);
+        SCAN(randomRequests1, initialHeadPosition, previousHeadPosition);
+        CSCAN(randomRequests1, initialHeadPosition, previousHeadPosition);
 
         // Run algorithms with part 2 requests
         System.out.println("Results for requests from input.txt:");
