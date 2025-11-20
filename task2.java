@@ -27,7 +27,7 @@ public class task2 {
         int prevDirection = Integer.compare(head, prevHead);
         for (int request : requests) {
             // Process each request in the order they arrive
-            System.out.println("Servicing request at cylinder: " + request);
+            // System.out.println("Servicing request at cylinder: " + request);
             if (Integer.compare(request, head) != prevDirection && prevDirection != 0) {
                 directionChanges++;
             }
@@ -96,7 +96,7 @@ public class task2 {
             prevDirection = nextDirection;
             visited[nextIndex] = true;
 
-            System.out.println("Servicing request at cylinder: " + next);
+            // System.out.println("Servicing request at cylinder: " + next);
             totalHeadMovement += Math.abs(head - next);
             head = next;
         }
@@ -114,7 +114,7 @@ public class task2 {
         int step = (start < end) ? 1 : -1;
 
         for (int i = start; i != end + step; i += step) {
-            System.out.println("Servicing request at cylinder: " + requests.get(i));
+            // System.out.println("Servicing request at cylinder: " + requests.get(i));
             totalHeadMovement += Math.abs(requests.get(i) - head);
             head = requests.get(i);
         }
@@ -143,7 +143,7 @@ public class task2 {
             // Move to the end before reversing
             totalHeadMovement += Math.abs(4999 - requests.get(requests.size() - 1));
             head = 4999;
-            System.out.println("Reached end of disk at cylinder: " + head);
+            // System.out.println("Reached end of disk at cylinder: " + head);
 
             // Service left side
             if (pos - 1 >= 0)
@@ -158,7 +158,7 @@ public class task2 {
             // Move to the start before reversing
             totalHeadMovement += Math.abs(requests.get(0) - 0);
             head = 0;
-            System.out.println("Reached end of disk at cylinder: " + head);
+            // System.out.println("Reached end of disk at cylinder: " + head);
 
             // Service right side
             if (pos < requests.size())
@@ -257,12 +257,12 @@ public class task2 {
         
 
         // ---- Run algorithms on both sets of requests ----
-        Scanner scanner = new Scanner(System.in);
+        Scanner scanner2 = new Scanner(System.in);
         System.out.print("Enter initial head position (0-4999): ");
-        int initialHeadPosition = scanner.nextInt();
+        int initialHeadPosition = scanner2.nextInt();
         System.out.print("Enter previous head position (0-4999): ");
-        int previousHeadPosition = scanner.nextInt();        
-        scanner.close();
+        int previousHeadPosition = scanner2.nextInt();        
+        scanner2.close();
 
         // Run algorithms with part 1 requests
         System.out.println("Results for random requests:");
