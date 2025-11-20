@@ -105,70 +105,106 @@ public class task2 {
         System.out.printf("SSTF - Total Head Movement: %d, Direction Changes: %d\n\n", totalHeadMovement, directionChanges);;
 
     }
-
-    // Scan algorithm implementation
-    public static void SCAN(ArrayList<Integer> requests, int head) {
+    
+    // Scan helper function
+    public static int processRange(int head, ArrayList<Integer> requests, int start, int end) {
         int totalHeadMovement = 0;
-        int directionChanges = 0;
-        
-        // Sort requests in ascending order
-        requests.add(4999);
-        Collections.sort(requests);
-        
-        // Find initial position of head in sorted list
-        int pos = Collections.binarySearch(requests, head);
-        if (pos < 0) pos = -pos - 1;
+        int step = (start < end) ? 1 : -1;
 
-        // Go towards end of list
-        for (int i = pos; i < requests.size(); i++) {
-            // Process each request in the order they arrive
+        for (int i = start; i != end + step; i += step) {
             System.out.println("Servicing request at cylinder: " + requests.get(i));
             totalHeadMovement += Math.abs(requests.get(i) - head);
             head = requests.get(i);
         }
-        directionChanges++;
-
-        // Go towards start of list
-        for (int i = pos - 1; i >= 0; i--) {
-            System.out.println("Servicing request at cylinder: " + requests.get(i));
-            totalHeadMovement += Math.abs(requests.get(i) - head);
-            head = requests.get(i);
-        }
-
-        // Output results
-        System.out.printf("SCAN - Total Head Movement: %d, Direction Changes: %d\n\n", totalHeadMovement, directionChanges);
+        return totalHeadMovement;
     }
 
     // Scan algorithm implementation
-    public static void CSCAN(ArrayList<Integer> requests, int head) {
+    public static void SCAN(ArrayList<Integer> requests, int head, int prevHead) {
         int totalHeadMovement = 0;
-        int directionChanges = 0;
         
         // Sort requests in ascending order
-        requests.add(0);
-        requests.add(4999);
         Collections.sort(requests);
         
         // Find initial position of head in sorted list
         int pos = Collections.binarySearch(requests, head);
         if (pos < 0) pos = -pos - 1;
 
-        // Go towards end of list
-        for (int i = pos; i < requests.size(); i++) {
-            // Process each request in the order they arrive
-            System.out.println("Servicing request at cylinder: " + requests.get(i));
-            totalHeadMovement += Math.abs(requests.get(i) - head);
-            head = requests.get(i);
-        }
-        directionChanges++;
+        // Determine initial direction
+        boolean movingRight = head >= prevHead;
+        System.out.println("Initial head direction: " + (movingRight ? "right" : "left"));
 
-        // Go towards start of list
-        for (int i = 0; i < pos; i++) {
-            System.out.println("Servicing request at cylinder: " + requests.get(i));
-            totalHeadMovement += Math.abs(requests.get(i) - head);
-            head = requests.get(i);
+        // Process requests based on initial direction
+        if (movingRight) {
+            // Go towards end of list
+            totalHeadMovement += processRange(head, requests, pos, requests.size() - 1);
+            // Move to the end before reversing
+            totalHeadMovement += Math.abs(4999 - requests.get(requests.size() - 1));
+            head = 4999;
+            System.out.println("Reached end of disk at cylinder: " + head);
+
+            // Go towards start of list
+            totalHeadMovement += processRange(head, requests, pos - 1, 0);
+        } else {
+            // Go towards start of list
+            totalHeadMovement += processRange(head, requests, pos - 1, 0);
+            // Move to the start before reversing
+            totalHeadMovement += Math.abs(requests.get(0) - 0);
+            head = 0;
+            System.out.println("Reached end of disk at cylinder: " + head);
+
+            // Go towards end of list
+            totalHeadMovement += processRange(head, requests, pos, requests.size() - 1);
         }
-        directionChanges++;
+
+        // Output results
+        System.out.printf("SCAN - Total Head Movement: %d, Direction Changes: %d\n\n", totalHeadMovement, 1);
+    }
+
+    // Scan algorithm implementation
+    public static void CSCAN(ArrayList<Integer> requests, int head, int prevHead) {
+        int totalHeadMovement = 0;
+        int directionChanges = 0;
+        
+        // Sort requests in ascending order
+        Collections.sort(requests);
+        
+        // Find initial position of head in sorted list
+        int pos = Collections.binarySearch(requests, head);
+        if (pos < 0) pos = -pos - 1;
+
+        boolean movingRight = head >= prevHead;
+        System.out.println("Initial head direction: " + (movingRight ? "right" : "left"));
+
+        // Process requests based on initial direction
+        if (movingRight) {
+            // Go towards end of list
+            totalHeadMovement += processRange(head, requests, pos, requests.size() - 1);
+            // Move to the end before jumping to the start
+            totalHeadMovement += Math.abs(4999 - requests.get(requests.size() - 1));
+            System.out.printf("Reached end of disk at cylinder: 4999\nRestarting at cylinder 0\n");
+            // Jump from end to start
+            directionChanges++;
+            totalHeadMovement += 4999;
+            head = 0;
+
+            // Go towards start of list
+            totalHeadMovement += processRange(head, requests, 0, pos - 1);
+        } else {
+            // Go towards start of list
+            totalHeadMovement += processRange(head, requests, pos - 1, 0);
+            // Move to the start before jumping to the end
+            totalHeadMovement += Math.abs(requests.get(0) - 0);
+            System.out.printf("Reached end of disk at cylinder 0\nJumping to cylinder 4999\n");
+            // Jump from start to end
+            directionChanges++;
+            totalHeadMovement += 4999;
+            head = 4999;
+
+            // Go towards end of list
+            totalHeadMovement += processRange(head, requests, pos, requests.size() - 1);
+            directionChanges++;
+        }
 
         // Output results
         System.out.printf("CSCAN - Total Head Movement: %d, Direction Changes: %d\n\n", totalHeadMovement, directionChanges);
@@ -205,21 +241,23 @@ public class task2 {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter initial head position (0-4999): ");
         int initialHeadPosition = scanner.nextInt();
+        System.out.print("Enter previous head position (0-4999): ");
+        int previousHeadPosition = scanner.nextInt();        
         scanner.close();
 
         // Run algorithms with part 1 requests
         System.out.println("Results for random requests:");
-        FCFS(randomRequests1, initialHeadPosition);
-        SSTF(randomRequests1, initialHeadPosition);
-        SCAN(randomRequests1, initialHeadPosition);
-        CSCAN(randomRequests1, initialHeadPosition);
+        // FCFS(randomRequests1, initialHeadPosition);
+        // SSTF(randomRequests1, initialHeadPosition);
+        // SCAN(randomRequests1, initialHeadPosition, previousHeadPosition);
+        // CSCAN(randomRequests1, initialHeadPosition, previousHeadPosition);
 
         // Run algorithms with part 2 requests
         System.out.println("Results for requests from input.txt:");
-        FCFS(randomRequests2, initialHeadPosition);
-        SSTF(randomRequests2, initialHeadPosition);
-        SCAN(randomRequests2, initialHeadPosition);
-        CSCAN(randomRequests2, initialHeadPosition);
+        // FCFS(randomRequests2, initialHeadPosition);
+        // SSTF(randomRequests2, initialHeadPosition);
+        // SCAN(randomRequests2, initialHeadPosition, previousHeadPosition);
+        CSCAN(randomRequests2, initialHeadPosition, previousHeadPosition);
 
     }
 }
