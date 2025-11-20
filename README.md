@@ -19,10 +19,17 @@ To run this project, you will need to have the following environment variables:
 
 ## Running Tests
 
-To run each task, run the following command
+To run each task through the Java Compiler, run the following command:
 
 ```bash
   javac task1.java
   java task1
 ```
-Change the file name as needed.
+Change the file name as needed (i.e. task2.java for task2, task3.java for task3).
+
+To run each task through its respective Jar file, run the following command:
+
+```bash
+  java -jar 'task1.jar'
+```
+Change the file name as needed (i.e. task2.jar for task2, task3.jar for task3).
