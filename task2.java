@@ -109,6 +109,8 @@ public class task2 {
     // Scan helper function
     public static int processRange(int head, ArrayList<Integer> requests, int start, int end) {
         int totalHeadMovement = 0;
+        start = Math.max(0, Math.min(start, requests.size() - 1));
+        end = Math.max(0, Math.min(end, requests.size() - 1));
         int step = (start < end) ? 1 : -1;
 
         for (int i = start; i != end + step; i += step) {
@@ -143,18 +145,25 @@ public class task2 {
             head = 4999;
             System.out.println("Reached end of disk at cylinder: " + head);
 
-            // Go towards start of list
-            totalHeadMovement += processRange(head, requests, pos - 1, 0);
+            // Service left side
+            if (pos - 1 >= 0)
+                // Go towards start of list
+                totalHeadMovement += processRange(head, requests, pos - 1, 0);
         } else {
-            // Go towards start of list
-            totalHeadMovement += processRange(head, requests, pos - 1, 0);
+            // Service left side
+            if (pos - 1 >= 0)
+                // Go towards start of list
+                totalHeadMovement += processRange(head, requests, pos - 1, 0);
+            
             // Move to the start before reversing
             totalHeadMovement += Math.abs(requests.get(0) - 0);
             head = 0;
             System.out.println("Reached end of disk at cylinder: " + head);
 
-            // Go towards end of list
-            totalHeadMovement += processRange(head, requests, pos, requests.size() - 1);
+            // Service right side
+            if (pos < requests.size())
+                // Go towards end of list
+                totalHeadMovement += processRange(head, requests, pos, requests.size() - 1);
         }
 
         // Output results
@@ -178,32 +187,41 @@ public class task2 {
 
         // Process requests based on initial direction
         if (movingRight) {
-            // Go towards end of list
-            totalHeadMovement += processRange(head, requests, pos, requests.size() - 1);
+            if (pos < requests.size())
+                // Go towards end of list
+                totalHeadMovement += processRange(head, requests, pos, requests.size() - 1);
+
             // Move to the end before jumping to the start
             totalHeadMovement += Math.abs(4999 - requests.get(requests.size() - 1));
             System.out.printf("Reached end of disk at cylinder: 4999\nRestarting at cylinder 0\n");
+            
             // Jump from end to start
             directionChanges++;
             totalHeadMovement += 4999;
             head = 0;
 
-            // Go towards start of list
-            totalHeadMovement += processRange(head, requests, 0, pos - 1);
+            if (pos > 0)
+                // Go towards start of list
+                totalHeadMovement += processRange(head, requests, 0, pos - 1);
             directionChanges++;
         } else {
-            // Go towards start of list
-            totalHeadMovement += processRange(head, requests, pos - 1, 0);
+            if (pos - 1 >= 0)
+                // Go towards start of list
+                totalHeadMovement += processRange(head, requests, pos - 1, 0);
+ 
             // Move to the start before jumping to the end
             totalHeadMovement += requests.get(0);
             System.out.printf("Reached end of disk at cylinder 0\nJumping to cylinder 4999\n");
+            
             // Jump from start to end
             directionChanges++;
             totalHeadMovement += 4999;
             head = 4999;
 
-            // Go towards end of list
-            totalHeadMovement += processRange(head, requests, requests.size() - 1, pos);
+            // Service right portion
+            if (pos < requests.size())
+                // Go towards end of list
+                totalHeadMovement += processRange(head, requests, requests.size() - 1, pos);
             directionChanges++;
         }
 
