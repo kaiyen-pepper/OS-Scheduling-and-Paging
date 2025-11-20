@@ -21,10 +21,10 @@ import java.util.Collections;
 
 public class task2 {
     // First-Come, First-Serve algorithm implementation
-    public static void FCFS(ArrayList<Integer> requests, int head) {
+    public static void FCFS(ArrayList<Integer> requests, int head, int prevHead) {
         int totalHeadMovement = 0;
         int directionChanges = 0;
-        int prevDirection = 0;
+        int prevDirection = Integer.compare(head, prevHead);
         for (int request : requests) {
             // Process each request in the order they arrive
             System.out.println("Servicing request at cylinder: " + request);
@@ -41,14 +41,14 @@ public class task2 {
     }
 
     // Shortest Seek Time First algorithm implementation
-    public static void SSTF(ArrayList<Integer> requests, int head) {
+    public static void SSTF(ArrayList<Integer> requests, int head, int prevHead) {
         // Sort requests in ascending order
         Collections.sort(requests);
 
         int totalHeadMovement = 0;
         int directionChanges = 0;
         boolean[] visited = new boolean[requests.size()];
-        String prevDirection = null;
+        String prevDirection = Integer.compare(head, prevHead) > 0 ? "right" : (Integer.compare(head, prevHead) < 0 ? "left" : null);
 
         // Find initial position of head in sorted list
         int pos = Collections.binarySearch(requests, head);
@@ -124,7 +124,7 @@ public class task2 {
         int totalHeadMovement = 0;
         
         // Sort requests in ascending order
-        Collections.sort(requests);
+        requests.sort(null);
         
         // Find initial position of head in sorted list
         int pos = Collections.binarySearch(requests, head);
@@ -167,7 +167,7 @@ public class task2 {
         int directionChanges = 0;
         
         // Sort requests in ascending order
-        Collections.sort(requests);
+        requests.sort(null);
         
         // Find initial position of head in sorted list
         int pos = Collections.binarySearch(requests, head);
@@ -190,11 +190,12 @@ public class task2 {
 
             // Go towards start of list
             totalHeadMovement += processRange(head, requests, 0, pos - 1);
+            directionChanges++;
         } else {
             // Go towards start of list
             totalHeadMovement += processRange(head, requests, pos - 1, 0);
             // Move to the start before jumping to the end
-            totalHeadMovement += Math.abs(requests.get(0) - 0);
+            totalHeadMovement += requests.get(0);
             System.out.printf("Reached end of disk at cylinder 0\nJumping to cylinder 4999\n");
             // Jump from start to end
             directionChanges++;
@@ -202,7 +203,7 @@ public class task2 {
             head = 4999;
 
             // Go towards end of list
-            totalHeadMovement += processRange(head, requests, pos, requests.size() - 1);
+            totalHeadMovement += processRange(head, requests, requests.size() - 1, pos);
             directionChanges++;
         }
 
@@ -247,16 +248,16 @@ public class task2 {
 
         // Run algorithms with part 1 requests
         System.out.println("Results for random requests:");
-        // FCFS(randomRequests1, initialHeadPosition);
-        // SSTF(randomRequests1, initialHeadPosition);
+        // FCFS(randomRequests1, initialHeadPosition, previousHeadPosition);
+        // SSTF(randomRequests1, initialHeadPosition, previousHeadPosition);
         // SCAN(randomRequests1, initialHeadPosition, previousHeadPosition);
         // CSCAN(randomRequests1, initialHeadPosition, previousHeadPosition);
 
         // Run algorithms with part 2 requests
         System.out.println("Results for requests from input.txt:");
-        // FCFS(randomRequests2, initialHeadPosition);
-        // SSTF(randomRequests2, initialHeadPosition);
-        // SCAN(randomRequests2, initialHeadPosition, previousHeadPosition);
+        FCFS(randomRequests2, initialHeadPosition, previousHeadPosition);
+        SSTF(randomRequests2, initialHeadPosition, previousHeadPosition);
+        SCAN(randomRequests2, initialHeadPosition, previousHeadPosition);
         CSCAN(randomRequests2, initialHeadPosition, previousHeadPosition);
 
     }
